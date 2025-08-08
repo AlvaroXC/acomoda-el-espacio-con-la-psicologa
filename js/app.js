@@ -50,18 +50,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function mostrarDialogo(indice){
 
-        console.log(indice)
-        
-        const dialogo = dialogos[indice];
-        console.log(dialogo)
-        
-        titoContedorDialogo.classList.remove('oculto');
-        titoContedorDialogo.classList.add('flex');
-        titoDialogoParrafo.textContent = dialogo.dialogo;
-        titoImagen.src = 'src/img/Titto-hablando.png'
-
-        if(indice === dialogos.length -1){
-
+        if(indice !== dialogos.length -1){
+            const dialogo = dialogos[indice];
+            titoContedorDialogo.classList.remove('oculto');
+            titoContedorDialogo.classList.add('flex');
+            eliminarTextoAnterior(titoDialogoParrafo)
+            generarEfectoTyping(dialogo.dialogo, titoDialogoParrafo)
+            titoImagen.src = 'src/img/Titto-hablando.png'
+        }else{
             titoContedorDialogo.classList.remove('flex')
             titoContedorDialogo.classList.add('oculto');
             titoContenedor.classList.add('oculto')
@@ -70,6 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
             mostrarImagenesArrastrables();
             activarDragAndDrop();
         }
+
         
     }
 
@@ -98,7 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
             titoContenedor.classList.add('flex');
             titoContedorDialogo.classList.remove('oculto')
             titoContedorDialogo.classList.add('flex');
-            titoDialogoParrafo.textContent = dialogos[dialogoIndice].dialogo;
+            console.log(titoDialogoParrafo)
+            eliminarTextoAnterior(titoDialogoParrafo)
+            generarEfectoTyping(dialogos[dialogoIndice].dialogo, titoDialogoParrafo)
         })
         contenedorBotones.appendChild(continuarButton);
     }
@@ -188,6 +187,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+    }
+
+    function generarEfectoTyping(texto, elemento, indice = 0){
+
+        elemento.textContent += texto[indice];
+        
+        if(indice == texto.length -1 ) return
+
+        setTimeout(() => {
+            generarEfectoTyping(texto, elemento, indice + 1 )
+        }, 50);
+
+    }
+
+    function eliminarTextoAnterior(elemento){
+        elemento.textContent = ''
     }
 
     
