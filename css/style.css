@@ -214,6 +214,7 @@ div{
 }
 
 .tito__dialogo{
+    position: relative;
     display: flex;
     align-items: center;
     gap: 2rem;
@@ -246,16 +247,7 @@ div{
     text-align: center;
 }
 
-.contenedor__botones:nth-child(7){
-    grid-column-start: 4;
-    grid-column-end: 6;
-    align-items: center;
-    gap: 2rem;
-    justify-content: center;
-    margin-top: 1rem;
-}
-
-.contenedor__imagenes:nth-child(6){
+.contenedor__imagenes:nth-child(5){
     z-index: 1;
     position: absolute;
     grid-column-start: 3;
@@ -276,14 +268,6 @@ div{
     max-width: 50%;
 }
 
-/* .sillon__element, .cuadro__element, .bear__element, .plant__element{
-    transform: scale(0.6);
-} */
-
-/* .lapiz__element, .libro__element{
-    transform: scale(4);
-}  */
-
 
 .oculto {
     display: none;
@@ -293,4 +277,77 @@ div{
     display: flex;
 }
 
+@keyframes clickable {
+    0%{
+        filter: drop-shadow(0 0 .5rem #0000004d);
+        transform: scale(1)
+    }
+    to {
+        filter: drop-shadow(0 0 1rem #00000080);
+        transform: scale(1.05)
+    }
+}
 
+.animate-clickable{
+    animation: 0.4s infinite alternate clickable;
+}
+
+.imagen_cerrar_dialogo{
+    width: 11%;
+    position: absolute;
+    right: -4%;
+    top: -14%;
+    cursor: pointer;
+    color: white;
+}
+
+.imagen_cerrar_dialogo:hover{
+    scale: 110%;
+    filter: brightness(150%);
+}
+
+.btn-dialogo, .btn-sonido{
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    position: absolute;
+    display: inline-block;
+    height: auto;
+    width: auto;
+    z-index: 10;
+}
+
+.btn-sonido{
+    top: -25px;
+    right: -55px;
+}
+
+.btn-dialogo:hover, .btn-sonido:hover{
+    scale: 115%;
+    rotate: 5;
+    cursor: pointer;
+}
+
+.btn-dialogo{
+    top: -25px;
+    left: -25px;
+}
+
+.contenedor_boton_continuar{
+    display: inline-block;
+    position: absolute; 
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 2rem;
+}
+
+.boton_continuar{
+    background-color: var(--morado);
+    color: white; 
+    font-weight: bold;
+    padding: 1rem;
+    border-color: 1px solid var(--morado);
+    border-radius: 1rem;
+}

@@ -34,6 +34,7 @@
                     <img class="tito__head__imagen" src="src/img/tito-head.png" alt="">
                 </div>
                 <p class="tito__dialogo__parrafo"></p>
+                <img class="imagen_cerrar_dialogo" src="src/img/x_3d.png" alt="">
             </div>
         </div> <!-- termina contenedor del dialogo de tito -->
 
@@ -47,51 +48,50 @@
 
         <div class="escenario__contenedor">
             <img class="escenario__imagen" src="/src/img/Escenario.png" alt="Imagen del escenario">
+            <button class="btn-dialogo">
+                <img width="115px" src="src/img/dialog_3d.png" alt="Imagen de dialogo">
+            </button>
+            <button class="btn-sonido">
+                <img width="115px" src="src/img/sound_on_3d.png" alt="Imagen de sonido">
+            </button>
         </div> <!-- termina contenedor del escenario -->
-    
-        <div class="itzel__contenedor oculto">
-            <img class="itzel__imagen" src="src/img/Itzel.png" alt="Imagen de Itzel">
-        </div>
         
         <div class="contenedor__imagenes oculto">
             <div class="contenedor__imagenes__elements">
 
                 <div class="contenedor__imagen__sillon">
-                    <img class="sillon__element" src="src/img/sillon.png" alt="" data-id="sillon">
+                    <img class="sillon__element elemento-arrastrable" src="src/img/sillon.png" alt="" data-id="sillon">
                 </div>
                 
                 <div class="contenedor__imagen__cuadro">
-                    <img class="cuadro__element" src="src/img/cuadro-tito.png" alt="" data-id="cuadro">
+                    <img class="cuadro__element elemento-arrastrable" src="src/img/cuadro-tito.png" alt="" data-id="cuadro">
                     
                 </div>
                 <div class="contenedor__imagen__bear">
-                    <img class="bear__element" src="src/img/bear_3d.png" alt="" data-id="bear">
+                    <img class="bear__element elemento-arrastrable" src="src/img/bear_3d.png" alt="" data-id="bear">
                     
                 </div>
                 <div class="contenedor__imagen__planta">
-                    <img class="plant__element" src="src/img/plant_3d.png" alt="" data-id="plant">
+                    <img class="plant__element elemento-arrastrable" src="src/img/plant_3d.png" alt="" data-id="plant">
                     
                 </div>
                 <div class="contenedor__imagen__libro">
-                    <img class="libro__element" src="src/img/libro.png" alt="" data-id="libro">
+                    <img class="libro__element elemento-arrastrable" src="src/img/libro.png" alt="" data-id="libro">
                     
                 </div>
                 <div class="contenedor__imagen__lapiz">
-                    <img class="lapiz__element" src="src/img/lapiz.png" alt="" data-id="lapiz">
+                    <img class="lapiz__element elemento-arrastrable" src="src/img/lapiz.png" alt="" data-id="lapiz">
                     
                 </div>
                 <div class="contenedor__imagen__sillon">
-                    <img class="sillon__element" src="src/img/sillon.png" alt="" data-id="sillon2">
+                    <img class="sillon__element elemento-arrastrable" src="src/img/sillon.png" alt="" data-id="sillon2">
                 </div>
     
             </div>
         </div>
 
-
-        <div class="contenedor__botones" style="z-index: 10;">
-            <button class="boton__anterior">Anterior</button>
-            <button class="boton__siguiente">Siguiente</button>
-        </div>
+        <div class="contenedor_boton_continuar"></div>
+        <audio class="audio_lobby" src="src/lobby-low.mp3"></audio>
     </main>
     <footer class="footer">
         <p class="footer__parrafo">
