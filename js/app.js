@@ -12,6 +12,17 @@ const escenario = document.querySelector('.escenario__contenedor');
 const imagenes = document.querySelectorAll('.contenedor__imagenes__elements img');
 const imagenCerrarDialogo = document.querySelector('.imagen_cerrar_dialogo');
 const audioLobby = document.querySelector('.audio_lobby');
+const contenedorEscenarios = document.querySelector('.contenedor-escenarios');
+const contenedorEscenariosFlex = document.querySelector('.contenedor-escenarios-flex');
+
+const escenarioImagen = document.querySelector('.escenario__imagen');
+
+contenedorEscenariosFlex.addEventListener('click', (e) => {
+    const escenarioImagenActual = escenarioImagen.getAttribute('src');
+    const escenarioImagenSeleccionado = e.target.getAttribute('src'); 
+    escenarioImagen.setAttribute('src', escenarioImagenSeleccionado)
+    e.target.setAttribute('src', escenarioImagenActual);
+})
 
 const btnSonidoImagen = document.querySelector('.btn-sonido img');
 
@@ -95,6 +106,7 @@ async function handleClickInTitoImage(){
             setTimeout( () => {
                 ocultarElemento(titoContenedor);
                 ocultarElemento(titoContenedorDialogo);
+                contenedorEscenarios.classList.remove('oculto');
                 mostrarImagenesArrastrables();
                 activarDragAndDrop();
             }, 1000)
@@ -167,6 +179,7 @@ function crearBotonContinuar(){
 
         titoImagen.removeEventListener('click', handleClickInTitoImage);
         desactivarDraggable();
+        contenedorEscenarios.classList.add('oculto');
         mostrarElemento(titoContenedor);
         mostrarElemento(titoContenedorDialogo)
         eliminarTextoAnterior(titoDialogoParrafo)
