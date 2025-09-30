@@ -1,7 +1,9 @@
 const titoContenedorDialogo = document.querySelector('.tito__contenedor__dialogo');
+const titoDialogo = document.querySelector('.tito_contenedor_parrafo');
 const titoDialogoParrafo = document.querySelector('.tito__dialogo__parrafo');
 const titoImagen = document.querySelector('.tito__imagen');
 const titoContenedor = document.querySelector('.tito__contenedor');
+
 const contenedorBotonContinuar = document.querySelector('.contenedor_boton_continuar');
 const contenedorImagenes = document.querySelector('.contenedor__imagenes');
 
@@ -17,19 +19,19 @@ const contenedorEscenariosFlex = document.querySelector('.contenedor-escenarios-
 
 const escenarioImagen = document.querySelector('.escenario__imagen');
 
-contenedorEscenariosFlex.addEventListener('click', (e) => {
-    const escenarioImagenActual = escenarioImagen.getAttribute('src');
-    const escenarioImagenSeleccionado = e.target.getAttribute('src'); 
-    escenarioImagen.setAttribute('src', escenarioImagenSeleccionado)
-    e.target.setAttribute('src', escenarioImagenActual);
-})
-
 const btnSonidoImagen = document.querySelector('.btn-sonido img');
+
+const audioTitto = document.querySelector('.audio_tito');
 
 const IMAGENES_BTN_SONIDO = {
     sonido_on: 'src/img/sound_on_3d.png',
     sonido_off: 'src/img/sound_off_3d.png'
 }
+
+const IMAGENES_TITO = {
+    hablando: 'src/img/Titto-hablando.png',
+    normal: 'src/img/Tito.png'
+};
 
 const dialogos = [
     {
@@ -46,21 +48,25 @@ const dialogos = [
     }
 ];
 
-const IMAGENES_TITO = {
-    hablando: 'src/img/Titto-hablando.png',
-    normal: 'src/img/Tito.png'
-};
 
 let isTyping = false;
 let dialogoIndice = 0; 
 let elementoArrastrado = null; 
-let btnDialogoActivated = false;   
-
+let btnDialogoActivated = false; 
 
 document.addEventListener('DOMContentLoaded', () => {
     addAnimation();
     ocultarBotonDialogo();
 })
+
+contenedorEscenariosFlex.addEventListener('click', (e) => {
+    if(e.target.tagName !== 'IMG') return;
+    const escenarioImagenActual = escenarioImagen.getAttribute('src');
+    const escenarioImagenSeleccionado = e.target.getAttribute('src'); 
+    escenarioImagen.setAttribute('src', escenarioImagenSeleccionado)
+    e.target.setAttribute('src', escenarioImagenActual);
+})
+
 
 imagenCerrarDialogo.addEventListener('click', () => {
     if(isTyping) return
@@ -97,22 +103,51 @@ async function handleClickInTitoImage(){
         }
 
         removeAnimation();
+        titoContenedor.classList.add('animate-talking');
+        reproductirAudioTito();
         await mostrarDialogo();
+        pausarAudioTito();
+        titoContenedor.classList.remove('animate-talking')
         dialogoIndice++;
         addAnimation();
 
         if (dialogoIndice === 2) {
             removeAnimation();
-            setTimeout( () => {
-                ocultarElemento(titoContenedor);
-                ocultarElemento(titoContenedorDialogo);
-                contenedorEscenarios.classList.remove('oculto');
-                mostrarImagenesArrastrables();
-                activarDragAndDrop();
-            }, 1000)
+            const continuarButton = crearButonContinuar();
+            titoDialogo.appendChild(continuarButton);
+            continuarButton.addEventListener('click', prepararEscenarioParaDragAndDrop);
         }
 
     }
+}
+
+function crearButonContinuar(){
+    const continuarButton = document.createElement('button'); 
+    continuarButton.classList.add('boton_continuar', 'animate-clickable')
+    continuarButton.textContent = 'Continuar';
+    return continuarButton;
+}
+
+function prepararEscenarioParaDragAndDrop(){
+    ocultarElementosTito();
+    contenedorEscenarios.classList.remove('oculto');
+    mostrarImagenesArrastrables();
+    activarDragAndDrop();
+}
+
+function ocultarElementosTito(){
+    ocultarElemento(titoContenedor);
+    ocultarElemento(titoContenedorDialogo);
+}
+
+function reproductirAudioTito(){
+    audioTitto.loop = true; 
+    audioTitto.playbackRate = 1.2;
+    audioTitto.play();
+}
+
+function pausarAudioTito(){
+    audioTitto.pause();
 }
 
 function ocultarElemento(elemento) {
@@ -148,7 +183,10 @@ async function mostrarDialogoTito(dialogo) {
 
     // Generar efecto typing
     const titoParrafo = titoContenedorDialogo.querySelector('.tito__dialogo__parrafo');
+    const titoHeadImagen = titoContenedorDialogo.querySelector('.tito__head__imagen');
+    titoHeadImagen.classList.add('animate-talking-minihead');
     await generarEfectoTyping(dialogo.texto, titoParrafo);
+    titoHeadImagen.classList.remove('animate-talking-minihead');
 }
 
 function mostrarElemento(elemento) {
@@ -170,12 +208,12 @@ function mostarBotonDialogo(){
 }
 
 
-function crearBotonContinuar(){
-    const continuarButton = document.createElement('button');
-    // continuarButton.classList.add('boton__continuar');
-    continuarButton.textContent = 'Finalizar';
-    continuarButton.classList.add('boton_continuar')
-    continuarButton.addEventListener('click', async() => {
+function crearBotonFinalizar(){
+    const finalizarButton = document.createElement('button');
+    // finalizarButton.classList.add('boton__continuar');
+    finalizarButton.textContent = 'Finalizar';
+    finalizarButton.classList.add('boton_continuar')
+    finalizarButton.addEventListener('click', async() => {
 
         titoImagen.removeEventListener('click', handleClickInTitoImage);
         desactivarDraggable();
@@ -185,7 +223,7 @@ function crearBotonContinuar(){
         eliminarTextoAnterior(titoDialogoParrafo)
         await generarEfectoTyping(dialogos[dialogoIndice].texto, titoDialogoParrafo)
     })
-    contenedorBotonContinuar.appendChild(continuarButton)
+    contenedorBotonContinuar.appendChild(finalizarButton)
 
 }
 
@@ -268,7 +306,7 @@ function activarDragAndDrop() {
 
         // Verificar si ya no quedan imágenes en el contenedor
         if (contenedorImagenes.querySelectorAll('img').length === 0) {
-            crearBotonContinuar();
+            crearBotonFinalizar();
         }
     });
 
