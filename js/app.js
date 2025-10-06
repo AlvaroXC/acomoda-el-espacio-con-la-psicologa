@@ -21,6 +21,14 @@ const escenarioImagen = document.querySelector('.escenario__imagen');
 
 const btnSonidoImagen = document.querySelector('.btn-sonido img');
 
+const modal = document.getElementById('modal'); 
+
+const modalContenidoVideo = document.querySelector('.video__tutorial');;
+const modalContenedorContenidoVisual = document.querySelector('.modal__contenido-visual');
+const btnCerrarModal = document.querySelector('.modal__contenido__cerrar');
+const btnGaleria = document.querySelector('.btn-galeria');
+
+
 const audioTitto = document.querySelector('.audio_tito');
 
 const IMAGENES_BTN_SONIDO = {
@@ -32,6 +40,8 @@ const IMAGENES_TITO = {
     hablando: 'src/img/Titto-hablando.png',
     normal: 'src/img/Tito.png'
 };
+
+const IMAGEN_SALA_PSICOLOGIA = 'src/img/fiscalia.png'
 
 const dialogos = [
     {
@@ -53,11 +63,44 @@ let isTyping = false;
 let dialogoIndice = 0; 
 let elementoArrastrado = null; 
 let btnDialogoActivated = false; 
+let isGaleriaModalOpen = false; 
 
 document.addEventListener('DOMContentLoaded', () => {
-    addAnimation();
+    reproducirVideoTutorial();
     ocultarBotonDialogo();
 })
+
+btnCerrarModal.addEventListener('click', () => {
+    if(!isGaleriaModalOpen){
+        addAnimation();
+        reproducirAudioLobby();
+    }
+    modal.style.display = 'none';
+    isGaleriaModalOpen = false;
+})
+
+btnGaleria.addEventListener('click', () => {
+    isGaleriaModalOpen = true; 
+    const contenidoVisual = modalContenedorContenidoVisual.firstElementChild;
+    if(contenidoVisual.tagName === 'VIDEO'){
+        cambiarContenidoModal();
+    }
+    modal.style.display = 'flex';
+})
+
+function cambiarContenidoModal(){
+    const modalContenidoHeading = document.querySelector('.modal__contenido h4');
+    const modalContenidoParrafo = document.querySelector('.modal__contenido p'); 
+
+    modalContenedorContenidoVisual.removeChild(modalContenedorContenidoVisual.firstElementChild); 
+    
+    const nuevaImagen = document.createElement('img'); 
+    nuevaImagen.src = IMAGEN_SALA_PSICOLOGIA;
+    modalContenedorContenidoVisual.appendChild(nuevaImagen);
+    modalContenidoHeading.textContent = 'Sala de Psicología';
+    modalContenidoParrafo.textContent = 'Esta es una imagen real de cómo se ve este lugar en la vida real. De esta manera, si un día llegas a ir, ¡ya sabrás cómo es!'
+    btnCerrarModal.textContent = 'Cerrar'; 
+}
 
 contenedorEscenariosFlex.addEventListener('click', (e) => {
     if(e.target.tagName !== 'IMG') return;
@@ -83,6 +126,10 @@ buttonDialogo.addEventListener('click', () => {
 titoImagen.addEventListener('click', handleClickInTitoImage)
 
 buttonSonido.addEventListener('click', ()=>{
+    reproducirAudioLobby()
+})
+
+function reproducirAudioLobby(){
     //proxima funcionalidad, después de dar click
     audioLobby.loop = true; 
     if(audioLobby.paused){
@@ -92,7 +139,17 @@ buttonSonido.addEventListener('click', ()=>{
         btnSonidoImagen.src = IMAGENES_BTN_SONIDO.sonido_off;
         audioLobby.pause();
     }
-})
+}
+
+async function reproducirVideoTutorial(){
+    modalContenidoVideo.loop = true;
+    try {
+        await modalContenidoVideo.play();
+    } catch (err) {
+        console.error("La reproducción automática del video fue bloqueada por el navegador.", err);
+        // Opcional: Podrías mostrar un botón de play sobre el video si la reproducción automática falla.
+    }
+}
 
 async function handleClickInTitoImage(){
     if (dialogoIndice < dialogos.length && !isTyping) {
@@ -124,6 +181,7 @@ async function handleClickInTitoImage(){
 function crearButonContinuar(){
     const continuarButton = document.createElement('button'); 
     continuarButton.classList.add('boton_continuar', 'animate-clickable')
+    continuarButton.style.marginTop = '10px'
     continuarButton.textContent = 'Continuar';
     return continuarButton;
 }
@@ -133,6 +191,7 @@ function prepararEscenarioParaDragAndDrop(){
     contenedorEscenarios.classList.remove('oculto');
     mostrarImagenesArrastrables();
     activarDragAndDrop();
+    titoDialogo.removeChild(titoDialogo.querySelector('button'));
 }
 
 function ocultarElementosTito(){
@@ -212,7 +271,7 @@ function crearBotonFinalizar(){
     const finalizarButton = document.createElement('button');
     // finalizarButton.classList.add('boton__continuar');
     finalizarButton.textContent = 'Finalizar';
-    finalizarButton.classList.add('boton_continuar')
+    finalizarButton.classList.add('boton_continuar', 'animate-clickable')
     finalizarButton.addEventListener('click', async() => {
 
         titoImagen.removeEventListener('click', handleClickInTitoImage);
@@ -221,7 +280,12 @@ function crearBotonFinalizar(){
         mostrarElemento(titoContenedor);
         mostrarElemento(titoContenedorDialogo)
         eliminarTextoAnterior(titoDialogoParrafo)
+        contenedorBotonContinuar.removeChild(finalizarButton);
+        titoContenedor.classList.add('animate-talking');
+        reproductirAudioTito();
         await generarEfectoTyping(dialogos[dialogoIndice].texto, titoDialogoParrafo)
+        pausarAudioTito();
+        titoContenedor.classList.remove('animate-talking')
     })
     contenedorBotonContinuar.appendChild(finalizarButton)
 
