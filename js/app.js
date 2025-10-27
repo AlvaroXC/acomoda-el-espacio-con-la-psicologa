@@ -1,3 +1,5 @@
+import { dialogos } from "./dialogos.js";
+
 const titoContenedorDialogo = document.querySelector('.tito__contenedor__dialogo');
 const titoDialogo = document.querySelector('.tito_contenedor_parrafo');
 const titoDialogoParrafo = document.querySelector('.tito__dialogo__parrafo');
@@ -28,9 +30,6 @@ const modalContenedorContenidoVisual = document.querySelector('.modal__contenido
 const btnCerrarModal = document.querySelector('.modal__contenido__cerrar');
 const btnGaleria = document.querySelector('.btn-galeria');
 
-
-const audioTitto = document.querySelector('.audio_tito');
-
 const IMAGENES_BTN_SONIDO = {
     sonido_on: 'src/img/sound_on_3d.png',
     sonido_off: 'src/img/sound_off_3d.png'
@@ -41,22 +40,7 @@ const IMAGENES_TITO = {
     normal: 'src/img/Tito.png'
 };
 
-const IMAGEN_SALA_PSICOLOGIA = 'src/img/fiscalia.png'
-
-const dialogos = [
-    {
-        personaje: 'Tito',
-        texto: 'Vamos a ayudar a Itzel y a la psicóloga a hacer que su espacio sea más cómodo!'
-    },
-    {
-        personaje: 'Tito',
-        texto: 'Puedes mover los objetos y ponerlos donde quieras. ¡Hazlo a tu gusto!'
-    },
-    {
-        personaje: 'Tito', 
-        texto: '¡Qué bonito quedó todo! Itzel y la psicóloga estará muy contentas en este espacio. ¡Todo está listo para comenzar!'
-    }
-];
+const IMAGEN_SALA_PSICOLOGIA = 'src/img/psicologia.jpeg'
 
 
 let isTyping = false;
@@ -161,15 +145,14 @@ async function handleClickInTitoImage(){
 
         removeAnimation();
         titoContenedor.classList.add('animate-talking');
-        reproductirAudioTito();
         await mostrarDialogo();
-        pausarAudioTito();
         titoContenedor.classList.remove('animate-talking')
         dialogoIndice++;
         addAnimation();
 
         if (dialogoIndice === 2) {
             removeAnimation();
+            titoImagen.removeEventListener('click', handleClickInTitoImage);
             const continuarButton = crearButonContinuar();
             titoDialogo.appendChild(continuarButton);
             continuarButton.addEventListener('click', prepararEscenarioParaDragAndDrop);
@@ -199,15 +182,6 @@ function ocultarElementosTito(){
     ocultarElemento(titoContenedorDialogo);
 }
 
-function reproductirAudioTito(){
-    audioTitto.loop = true; 
-    audioTitto.playbackRate = 1.2;
-    audioTitto.play();
-}
-
-function pausarAudioTito(){
-    audioTitto.pause();
-}
 
 function ocultarElemento(elemento) {
     elemento.classList.remove('flex');
@@ -282,9 +256,7 @@ function crearBotonFinalizar(){
         eliminarTextoAnterior(titoDialogoParrafo)
         contenedorBotonContinuar.removeChild(finalizarButton);
         titoContenedor.classList.add('animate-talking');
-        reproductirAudioTito();
         await generarEfectoTyping(dialogos[dialogoIndice].texto, titoDialogoParrafo)
-        pausarAudioTito();
         titoContenedor.classList.remove('animate-talking')
     })
     contenedorBotonContinuar.appendChild(finalizarButton)
@@ -376,13 +348,6 @@ function activarDragAndDrop() {
 
 }
 
-async function generarEfectoTyping(texto, elemento, velocidad = 50) {
-    elemento.textContent = ""; // limpiar antes
-    for (let i = 0; i < texto.length; i++) {
-        elemento.textContent += texto[i];
-        await new Promise(resolve => setTimeout(resolve, velocidad));
-    }
-}
 
 function eliminarTextoAnterior(elemento){
     elemento.textContent = ''
@@ -396,3 +361,47 @@ function desactivarDraggable(){
     })
 }
 
+async function generarEfectoTyping(texto, elemento, velocidad = 30) {
+    elemento.textContent = ""; 
+
+    let wordCounter = 0; 
+    const WORDS_PER_SOUND = 3; 
+
+    //const audioSrc = characterName === 'Tito' ? AUDIO_TITO.src : AUDIO_PSICOLOGA.src;
+
+    for (let i = 0; i < texto.length; i++) {
+        elemento.textContent += texto[i];
+        const prevChar = i > 0 ? texto[i - 1] : ' ';
+        const isWordBoundary = prevChar === ' ' || /[.!?;:]/.test(prevChar);
+
+        if (isWordBoundary && texto[i] !== ' ') {
+            wordCounter++;
+            if (wordCounter % WORDS_PER_SOUND === 0) {
+                playFluidSpeechSound();
+            }
+        }
+
+        await new Promise(resolve => setTimeout(resolve, velocidad));
+    }
+}
+
+function playFluidSpeechSound() {
+
+    const VOLUME = 0.7; 
+    const AUDIO_TITO_SRC = 'src/tito_voice.mp3';
+
+    const audio = new Audio(AUDIO_TITO_SRC); 
+
+    const randomPitch = 0.8 + Math.random() * 0.4;
+    
+    audio.playbackRate = randomPitch; 
+    audio.preservesPitch = false; 
+
+    audio.volume = VOLUME;
+
+    audio.currentTime = 0;
+    
+    audio.play().catch(e => {
+        console.error("Error al reproducir sonido fluido:", e);
+    });
+}
