@@ -1,52 +1,113 @@
 import { dialogos } from "./dialogos.js";
 
+/** @type {HTMLElement} Contenedor principal del diálogo de Tito */
 const titoContenedorDialogo = document.querySelector('.tito__contenedor__dialogo');
+
+/** @type {HTMLElement} Contenedor del párrafo de Tito */
 const titoDialogo = document.querySelector('.tito_contenedor_parrafo');
+
+/** @type {HTMLParagraphElement} Elemento párrafo donde se muestra el texto del diálogo */
 const titoDialogoParrafo = document.querySelector('.tito__dialogo__parrafo');
+
+/** @type {HTMLImageElement} Imagen del personaje Tito */
 const titoImagen = document.querySelector('.tito__imagen');
+
+/** @type {HTMLElement} Contenedor principal del personaje Tito */
 const titoContenedor = document.querySelector('.tito__contenedor');
 
+/** @type {HTMLElement} Contenedor del botón continuar */
 const contenedorBotonContinuar = document.querySelector('.contenedor_boton_continuar');
+
+/** @type {HTMLElement} Contenedor de imágenes arrastrables */
 const contenedorImagenes = document.querySelector('.contenedor__imagenes');
 
+/** @type {HTMLButtonElement} Botón para controlar el audio */
 const buttonSonido = document.querySelector('.btn-sonido');
+
+/** @type {HTMLButtonElement} Botón para mostrar/ocultar diálogos */
 const buttonDialogo = document.querySelector('.btn-dialogo');
 
+/** @type {HTMLElement} Contenedor del escenario donde se sueltan elementos */
 const escenario = document.querySelector('.escenario__contenedor');
+
+/** @type {NodeListOf<HTMLImageElement>} Colección de imágenes arrastrables */
 const imagenes = document.querySelectorAll('.contenedor__imagenes__elements img');
+
+/** @type {HTMLImageElement} Botón para cerrar el diálogo */
 const imagenCerrarDialogo = document.querySelector('.imagen_cerrar_dialogo');
+
+/** @type {HTMLAudioElement} Audio de fondo del lobby */
 const audioLobby = document.querySelector('.audio_lobby');
+
+/** @type {HTMLElement} Contenedor principal de escenarios */
 const contenedorEscenarios = document.querySelector('.contenedor-escenarios');
+
+/** @type {HTMLElement} Contenedor flex de escenarios */
 const contenedorEscenariosFlex = document.querySelector('.contenedor-escenarios-flex');
 
+/** @type {HTMLImageElement} Imagen del escenario actual */
 const escenarioImagen = document.querySelector('.escenario__imagen');
 
+/** @type {HTMLImageElement} Imagen del botón de sonido */
 const btnSonidoImagen = document.querySelector('.btn-sonido img');
 
+/** @type {HTMLElement} Elemento modal principal */
 const modal = document.getElementById('modal'); 
 
-const modalContenidoVideo = document.querySelector('.video__tutorial');;
+/** @type {HTMLVideoElement} Video tutorial del modal */
+const modalContenidoVideo = document.querySelector('.video__tutorial');
+
+/** @type {HTMLElement} Contenedor del contenido visual del modal */
 const modalContenedorContenidoVisual = document.querySelector('.modal__contenido-visual');
+
+/** @type {HTMLButtonElement} Botón para cerrar el modal */
 const btnCerrarModal = document.querySelector('.modal__contenido__cerrar');
+
+/** @type {HTMLButtonElement} Botón para abrir la galería */
 const btnGaleria = document.querySelector('.btn-galeria');
 
+/**
+ * Rutas de las imágenes para el botón de sonido
+ * @constant {Object}
+ * @property {string} sonido_on - Imagen cuando el sonido está activado
+ * @property {string} sonido_off - Imagen cuando el sonido está desactivado
+ */
 const IMAGENES_BTN_SONIDO = {
     sonido_on: 'src/img/sound_on_3d.png',
     sonido_off: 'src/img/sound_off_3d.png'
 }
 
+/**
+ * Rutas de las imágenes del personaje Tito
+ * @constant {Object}
+ * @property {string} hablando - Imagen de Tito cuando está hablando
+ * @property {string} normal - Imagen de Tito en estado normal
+ */
 const IMAGENES_TITO = {
     hablando: 'src/img/Titto-hablando.png',
     normal: 'src/img/Tito.png'
 };
 
+/**
+ * Ruta de la imagen de la sala de psicología
+ * @constant {string}
+ */
 const IMAGEN_SALA_PSICOLOGIA = 'src/img/psicologia.jpeg'
 
 
+/** @type {boolean} Indica si se está ejecutando el efecto de escritura */
 let isTyping = false;
+
+/** @type {number} Índice actual del diálogo en reproducción */
 let dialogoIndice = 0; 
+
+/** @type {HTMLElement|null} Referencia al elemento que está siendo arrastrado */
 let elementoArrastrado = null; 
+
+/** @type {boolean} Indica si el botón de diálogo está activado */
 let btnDialogoActivated = false; 
+
+/** @type {boolean} Indica si el modal de galería está abierto */
 let isGaleriaModalOpen = false; 
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -72,6 +133,10 @@ btnGaleria.addEventListener('click', () => {
     modal.style.display = 'flex';
 })
 
+/**
+ * Cambia el contenido del modal de video a la imagen de la sala de psicología
+ * Actualiza el título, descripción y texto del botón de cerrar
+ */
 function cambiarContenidoModal(){
     const modalContenidoHeading = document.querySelector('.modal__contenido h4');
     const modalContenidoParrafo = document.querySelector('.modal__contenido p'); 
@@ -113,6 +178,10 @@ buttonSonido.addEventListener('click', ()=>{
     reproducirAudioLobby()
 })
 
+/**
+ * Reproduce o pausa el audio del lobby y actualiza el icono del botón
+ * El audio se reproduce en loop cuando está activo
+ */
 function reproducirAudioLobby(){
     //proxima funcionalidad, después de dar click
     audioLobby.loop = true; 
@@ -125,16 +194,25 @@ function reproducirAudioLobby(){
     }
 }
 
+/**
+ * Reproduce el video tutorial en loop automáticamente
+ * @async
+ * @throws {Error} Si la reproducción automática es bloqueada por el navegador
+ */
 async function reproducirVideoTutorial(){
     modalContenidoVideo.loop = true;
     try {
         await modalContenidoVideo.play();
     } catch (err) {
         console.error("La reproducción automática del video fue bloqueada por el navegador.", err);
-        // Opcional: Podrías mostrar un botón de play sobre el video si la reproducción automática falla.
     }
 }
 
+/**
+ * Maneja el evento de clic en la imagen de Tito
+ * Controla el flujo de diálogos y activa el modo drag and drop cuando es necesario
+ * @async
+ */
 async function handleClickInTitoImage(){
     if (dialogoIndice < dialogos.length && !isTyping) {
 
@@ -161,6 +239,10 @@ async function handleClickInTitoImage(){
     }
 }
 
+/**
+ * Crea y retorna un botón de continuar con estilos y clases predefinidas
+ * @returns {HTMLButtonElement} Botón de continuar creado
+ */
 function crearButonContinuar(){
     const continuarButton = document.createElement('button'); 
     continuarButton.classList.add('boton_continuar', 'animate-clickable')
@@ -169,6 +251,10 @@ function crearButonContinuar(){
     return continuarButton;
 }
 
+/**
+ * Prepara el escenario para la funcionalidad de arrastrar y soltar
+ * Oculta los elementos de Tito y muestra las imágenes arrastrables
+ */
 function prepararEscenarioParaDragAndDrop(){
     ocultarElementosTito();
     contenedorEscenarios.classList.remove('oculto');
@@ -196,6 +282,10 @@ function removeAnimation(){
     titoContenedor.classList.remove('animate-clickable');
 }
 
+/**
+ * Muestra el diálogo actual de Tito
+ * @async
+ */
 async function mostrarDialogo() {
     if (isTyping) return;
     isTyping = true;
@@ -207,6 +297,12 @@ async function mostrarDialogo() {
     isTyping = false;
 }
 
+/**
+ * Muestra el diálogo específico de Tito con animaciones
+ * @async
+ * @param {Object} dialogo - Objeto con la información del diálogo
+ * @param {string} dialogo.texto - Texto del diálogo a mostrar
+ */
 async function mostrarDialogoTito(dialogo) {
     // Actualizar imágenes
     titoImagen.src = IMAGENES_TITO.hablando;
@@ -240,7 +336,10 @@ function mostarBotonDialogo(){
     buttonDialogo.style.display = 'inline-block';
 }
 
-
+/**
+ * Crea un botón de finalizar que termina la sesión de drag and drop
+ * y continúa con el siguiente diálogo
+ */
 function crearBotonFinalizar(){
     const finalizarButton = document.createElement('button');
     // finalizarButton.classList.add('boton__continuar');
@@ -263,6 +362,10 @@ function crearBotonFinalizar(){
 
 }
 
+/**
+ * Activa la funcionalidad de drag and drop para las imágenes
+ * Configura los event listeners necesarios para arrastrar y soltar elementos
+ */
 function activarDragAndDrop() {
     // 1. Hacer las imágenes arrastrables
     imagenes.forEach((img, index) => {
@@ -353,21 +456,29 @@ function eliminarTextoAnterior(elemento){
     elemento.textContent = ''
 }
 
+/**
+ * Desactiva la capacidad de arrastrar de todos los elementos arrastrables
+ */
 function desactivarDraggable(){
     const imagenesArrastables = document.querySelectorAll('.elemento-arrastrable');
-    console.log(imagenesArrastables)
     imagenesArrastables.forEach(imagen => {
         imagen.setAttribute('draggable', false);
     })
 }
 
+
+/**
+ * Genera un efecto de escritura tipo máquina de escribir con audio sincronizado
+ * @async
+ * @param {string} texto - Texto a mostrar con el efecto
+ * @param {HTMLElement} elemento - Elemento donde se mostrará el texto
+ * @param {number} [velocidad=30] - Velocidad de escritura en milisegundos por carácter
+*/
 async function generarEfectoTyping(texto, elemento, velocidad = 30) {
     elemento.textContent = ""; 
 
     let wordCounter = 0; 
     const WORDS_PER_SOUND = 3; 
-
-    //const audioSrc = characterName === 'Tito' ? AUDIO_TITO.src : AUDIO_PSICOLOGA.src;
 
     for (let i = 0; i < texto.length; i++) {
         elemento.textContent += texto[i];
@@ -377,7 +488,7 @@ async function generarEfectoTyping(texto, elemento, velocidad = 30) {
         if (isWordBoundary && texto[i] !== ' ') {
             wordCounter++;
             if (wordCounter % WORDS_PER_SOUND === 0) {
-                playFluidSpeechSound();
+                playFluentSound();
             }
         }
 
@@ -385,7 +496,12 @@ async function generarEfectoTyping(texto, elemento, velocidad = 30) {
     }
 }
 
-function playFluidSpeechSound() {
+/**
+ * Reproduce un sonido de voz con variación de tono aleatoria
+ * para simular una conversación más natural
+ */
+
+function playFluentSound() {
 
     const VOLUME = 0.7; 
     const AUDIO_TITO_SRC = 'src/tito_voice.mp3';
